@@ -16,3 +16,17 @@ Requisitos: JDK 21+, Maven 3.9+, Node 22+ e @sap/cds-dk.
     mvn spring-boot:run
 
 Abrir http://localhost:8080 para ver os serviços e o Fiori preview.
+
+## Regras de negócio (Java)
+
+Handlers em `hub/srv/src/main/java/customer/hub/handlers/`:
+
+- `@Before` em CREATE de Partners: valida `partnerNumber` (7 a 10 dígitos) e remove espaços do nome
+- `@On` na ação `blockPartner`: bloqueia um parceiro pelo número e devolve um resultado tipado
+
+### Exemplos
+
+    curl -X POST http://127.0.0.1:8080/odata/v4/PartnerService/blockPartner \
+      -H "Content-Type: application/json" -d '{"partnerNumber":"1000001"}'
+
+Respostas verificadas: 400 para número inválido, 404 para parceiro inexistente.
