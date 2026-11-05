@@ -14,6 +14,7 @@ import com.sap.cds.services.handler.EventHandler;
 import com.sap.cds.services.handler.annotations.Before;
 import com.sap.cds.services.handler.annotations.On;
 import com.sap.cds.services.handler.annotations.ServiceName;
+import com.sap.cds.services.handler.annotations.After;
 import com.sap.cds.services.persistence.PersistenceService;
 
 import cds.gen.partnerservice.BlockPartnerContext;
@@ -65,5 +66,15 @@ public class PartnerServiceHandler implements EventHandler {
         res.setBlocked(true);
         res.setMessage("Parceiro bloqueado com sucesso");
         context.setResult(res);
+    }
+
+        // DEPOIS de ler parceiros: marcar os bloqueados no nome (só na resposta)
+    @After(event = CqnService.EVENT_READ, entity = Partners_.CDS_NAME)
+    public void markBlocked(List<Partners> partners) {
+        for (Partners p : partners) {
+            if (Boolean.TRUE.equals(p.getBlocked()) && p.getName() != null) {
+                p.setName(p.getName() + " (BLOQUEADO)");
+            }
+        }
     }
 }
