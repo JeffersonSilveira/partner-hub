@@ -1,0 +1,4 @@
+ID,partner_ID,amount,currency,dueDate,paid
+aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,11111111-1111-1111-1111-111111111111,1500.00,BRL,2026-10-10,false
+bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,11111111-1111-1111-1111-111111111111,320.50,BRL,2026-12-01,true
+cccccccc-cccc-cccc-cccc-cccccccccccc,22222222-2222-2222-2222-222222222222,9900.00,EUR,2026-09-15,false
