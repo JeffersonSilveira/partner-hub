@@ -19,4 +19,11 @@ service PartnerService {
 
   // Ação com regra de negócio (a implementação em Java vem na Parte 7)
   action blockPartner(partnerNumber : String) returns BlockResult;
+
+    type PaidResult {
+    invoiceID : UUID;
+    paid      : Boolean;
+  }
+
+  action markInvoicePaid(invoiceID : UUID) returns PaidResult;
 }

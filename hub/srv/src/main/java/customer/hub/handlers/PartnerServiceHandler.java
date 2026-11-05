@@ -22,12 +22,18 @@ import cds.gen.partnerservice.BlockResult;
 import cds.gen.partnerservice.PartnerService_;
 import cds.gen.partnerservice.Partners;
 import cds.gen.partnerservice.Partners_;
+import cds.gen.partnerservice.Invoices;
+import cds.gen.partnerservice.Invoices_;
+import cds.gen.partnerservice.MarkInvoicePaidContext;
+import cds.gen.partnerservice.PaidResult;
 
 @Component
 @ServiceName(PartnerService_.CDS_NAME)
 public class PartnerServiceHandler implements EventHandler {
 
     private static final String DB_PARTNERS = "dev.jefferson.partnerhub.Partners";
+
+        private static final String DB_INVOICES = "dev.jefferson.partnerhub.Invoices";
 
     @Autowired
     private PersistenceService db;
@@ -76,5 +82,36 @@ public class PartnerServiceHandler implements EventHandler {
                 p.setName(p.getName() + " (BLOQUEADO)");
             }
         }
+    }
+
+        // ANTES de criar uma fatura: o valor não pode ser negativo
+    @Before(event = CqnService.EVENT_CREATE, entity = Invoices_.CDS_NAME)
+    public void validateInvoices(List<Invoices> invoices) {
+        for (Invoices i : invoices) {
+            if (i.getAmount() != null && i.getAmount().signum() < 0) {
+                throw new ServiceException(ErrorStatuses.BAD_REQUEST,
+                        "O valor da fatura não pode ser negativo");
+            }
+        }
+    }
+
+        // Implementação da ação markInvoicePaid
+    @On(event = MarkInvoicePaidContext.CDS_NAME)
+    public void markInvoicePaid(MarkInvoicePaidContext context) {
+        String id = context.getInvoiceID();
+
+        Result result = db.run(Update.entity(DB_INVOICES)
+                .where(i -> i.get("ID").eq(id))
+                .data("paid", true));
+
+        if (result.rowCount() == 0) {
+            throw new ServiceException(ErrorStatuses.NOT_FOUND,
+                    "Fatura {} não encontrada", id);
+        }
+
+        PaidResult res = PaidResult.create();
+        res.setInvoiceID(id);
+        res.setPaid(true);
+        context.setResult(res);
     }
 }
