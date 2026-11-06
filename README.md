@@ -30,3 +30,19 @@ Handlers em `hub/srv/src/main/java/customer/hub/handlers/`:
       -H "Content-Type: application/json" -d '{"partnerNumber":"1000001"}'
 
 Respostas verificadas: 400 para número inválido, 404 para parceiro inexistente.
+
+## Segurança
+
+Autorização declarada em `hub/srv/authorization.cds` com `@restrict` e `@requires`. Modo de autenticação `model-strict` (o que não está liberado exige login).
+
+Usuários de teste (apenas ambiente local): `viewer`, `manager` e `admin` (a senha é igual ao nome).
+
+| Papel | Permissões |
+|---|---|
+| Viewer | Ler parceiros e faturas |
+| Manager | Ler, criar e alterar |
+| Admin | Tudo, inclusive apagar e `blockPartner` |
+
+    curl -u admin:admin http://127.0.0.1:8080/odata/v4/PartnerService/Partners
+
+Os usuários de teste valem só localmente. Na BTP quem autentica é o XSUAA ou o IAS, e as anotações de autorização continuam as mesmas.

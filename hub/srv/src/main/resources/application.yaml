@@ -5,3 +5,29 @@ spring:
   sql.init.platform: h2
 cds:
   data-source.auto-config.enabled: false
+
+---
+cds:
+  security:
+    authentication:
+      mode: model-strict
+
+---
+spring:
+  config.activate.on-profile: default
+cds:
+  security:
+    mock:
+      users:
+        - name: viewer
+          password: viewer
+          roles:
+            - Viewer
+        - name: manager
+          password: manager
+          roles:
+            - Manager
+        - name: admin
+          password: admin
+          roles:
+            - Admin
