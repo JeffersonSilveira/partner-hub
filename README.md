@@ -46,3 +46,12 @@ Usuários de teste (apenas ambiente local): `viewer`, `manager` e `admin` (a sen
     curl -u admin:admin http://127.0.0.1:8080/odata/v4/PartnerService/Partners
 
 Os usuários de teste valem só localmente. Na BTP quem autentica é o XSUAA ou o IAS, e as anotações de autorização continuam as mesmas.
+
+## Testes
+
+Testes de integração em `hub/srv/src/test/java/customer/hub/PartnerServiceTest.java`: sobem a aplicação numa porta aleatória e chamam a API com Basic Auth, usando os usuários de teste.
+
+    cd hub
+    mvn test
+
+Cobrem autenticação (401), autorização por papel (403), validações (400), a ação `blockPartner`, a composição (apagar o parceiro apaga as faturas) e a visão `OpenInvoices`.
